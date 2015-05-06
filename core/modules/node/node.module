@@ -328,7 +328,10 @@ function node_add_body_field(NodeTypeInterface $type, $label = 'Body') {
       'field_storage' => $field_storage,
       'bundle' => $type->id(),
       'label' => $label,
-      'settings' => array('display_summary' => TRUE),
+      'settings' => array(
+        'display_summary' => TRUE,
+        'allowed_formats' => array(),
+      ),
     ));
     $field->save();
 

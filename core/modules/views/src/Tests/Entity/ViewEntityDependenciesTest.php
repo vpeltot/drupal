@@ -76,7 +76,10 @@ class ViewEntityDependenciesTest extends ViewUnitTestBase {
       'field_storage' => FieldStorageConfig::loadByName('node', 'body'),
       'bundle' => $content_type->id(),
       'label' => $this->randomMachineName() . '_body',
-      'settings' => array('display_summary' => TRUE),
+      'settings' => array(
+        'display_summary' => TRUE,
+        'allowed_formats' => array(),
+      ),
     ))->save();
 
     ViewTestData::createTestViews(get_class($this), array('views_test_config'));

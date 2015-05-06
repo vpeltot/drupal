@@ -12,11 +12,36 @@ use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\TypedData\DataDefinition;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Base class for 'text' configurable field types.
  */
 abstract class TextItemBase extends FieldItemBase {
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function defaultFieldSettings() {
+    return array(
+      'allowed_formats' => array(),
+    ) + parent::defaultFieldSettings();
+  }
+
+  public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
+    $element = parent::fieldSettingsForm($form, $form_state);
+    $settings = $this->getSettings();
+
+    $element['allowed_formats'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Allowed text formats'),
+      '#options' => $this->getProperties()['format']->getPossibleOptions(),
+      '#default_value' => $settings['allowed_formats'],
+    );
+
+    return $element;
+  }
 
   /**
    * {@inheritdoc}

@@ -12,6 +12,7 @@ source:
     name: body
     label: Body
     display_summary: false
+    allowed_formats: {  }
 process:
   entity_type: 'constants/entity_type'
   bundle: 'constants/bundle'

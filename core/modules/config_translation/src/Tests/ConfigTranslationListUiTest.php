@@ -402,7 +402,10 @@ class ConfigTranslationListUiTest extends WebTestBase {
       'field_storage' => FieldStorageConfig::loadByName('block_content', 'body'),
       'bundle' => $block_content_type->id(),
       'label' => 'Body',
-      'settings' => array('display_summary' => FALSE),
+      'settings' => array(
+        'display_summary' => FALSE,
+        'allowed_formats' => array(),
+      ),
     ));
     $field->save();
 

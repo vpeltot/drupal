@@ -35,6 +35,12 @@ class TextfieldWidget extends StringTextfieldWidget {
     $element['#type'] = 'text_format';
     $element['#format'] = isset($items[$delta]->format) ? $items[$delta]->format : NULL;
     $element['#base_type'] = $main_widget['value']['#type'];
+
+    $allowed_formats = array_filter($this->getFieldSetting('allowed_formats'));
+    if (!empty($allowed_formats) && !$this->isDefaultValueWidget($form_state)) {
+      $element['#allowed_formats'] = $allowed_formats;
+    }
+
     return $element;
   }
 

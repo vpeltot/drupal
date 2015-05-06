@@ -90,7 +90,7 @@ class TextWithSummaryItem extends TextItemBase {
    * {@inheritdoc}
    */
   public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
-    $element = array();
+    $element = parent::fieldSettingsForm($form, $form_state);
     $settings = $this->getSettings();
 
     $element['display_summary'] = array(

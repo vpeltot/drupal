@@ -16,6 +16,7 @@ required: true
 translatable: true
 default_value: {  }
 default_value_callback: ''
-settings: {  }
+settings:
+  allowed_formats: {  }
 third_party_settings: {  }
 field_type: text_long

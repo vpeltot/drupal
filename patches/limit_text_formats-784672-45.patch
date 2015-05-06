@@ -1,0 +1,302 @@
+diff --git a/core/modules/block_content/block_content.module b/core/modules/block_content/block_content.module
+index a050795..f3afbf4 100644
+--- a/core/modules/block_content/block_content.module
++++ b/core/modules/block_content/block_content.module
+@@ -83,7 +83,10 @@ function block_content_add_body_field($block_type_id, $label = 'Body') {
+       'field_storage' =>  FieldStorageConfig::loadByName('block_content', 'body'),
+       'bundle' => $block_type_id,
+       'label' => $label,
+-      'settings' => array('display_summary' => FALSE),
++      'settings' => array(
++        'display_summary' => FALSE,
++        'allowed_formats' => array(),
++      ),
+     ));
+     $field->save();
+ 
+diff --git a/core/modules/book/config/install/field.field.node.book.body.yml b/core/modules/book/config/install/field.field.node.book.body.yml
+index 4c128b6..fbc6150 100644
+--- a/core/modules/book/config/install/field.field.node.book.body.yml
++++ b/core/modules/book/config/install/field.field.node.book.body.yml
+@@ -18,5 +18,6 @@ default_value: {  }
+ default_value_callback: ''
+ settings:
+   display_summary: true
++  allowed_formats: {  }
+ third_party_settings: {  }
+ field_type: text_with_summary
+diff --git a/core/modules/config_translation/src/Tests/ConfigTranslationListUiTest.php b/core/modules/config_translation/src/Tests/ConfigTranslationListUiTest.php
+index d59bd7f..198dabc 100644
+--- a/core/modules/config_translation/src/Tests/ConfigTranslationListUiTest.php
++++ b/core/modules/config_translation/src/Tests/ConfigTranslationListUiTest.php
+@@ -401,7 +401,10 @@ public function doFieldListTest() {
+       'field_storage' => FieldStorageConfig::loadByName('block_content', 'body'),
+       'bundle' => $block_content_type->id(),
+       'label' => 'Body',
+-      'settings' => array('display_summary' => FALSE),
++      'settings' => array(
++        'display_summary' => FALSE,
++        'allowed_formats' => array(),
++      ),
+     ));
+     $field->save();
+ 
+diff --git a/core/modules/forum/config/install/field.field.node.forum.body.yml b/core/modules/forum/config/install/field.field.node.forum.body.yml
+index 279f160..6d9e46f 100644
+--- a/core/modules/forum/config/install/field.field.node.forum.body.yml
++++ b/core/modules/forum/config/install/field.field.node.forum.body.yml
+@@ -18,5 +18,6 @@ default_value: {  }
+ default_value_callback: ''
+ settings:
+   display_summary: true
++  allowed_formats: {  }
+ third_party_settings: {  }
+ field_type: text_with_summary
+diff --git a/core/modules/migrate_drupal/config/install/migrate.migration.d6_block_content_body_field.yml b/core/modules/migrate_drupal/config/install/migrate.migration.d6_block_content_body_field.yml
+index c079619..96a475f 100644
+--- a/core/modules/migrate_drupal/config/install/migrate.migration.d6_block_content_body_field.yml
++++ b/core/modules/migrate_drupal/config/install/migrate.migration.d6_block_content_body_field.yml
+@@ -12,6 +12,7 @@ source:
+     name: body
+     label: Body
+     display_summary: false
++    allowed_formats: {  }
+ process:
+   entity_type: 'constants/entity_type'
+   bundle: 'constants/bundle'
+diff --git a/core/modules/migrate_drupal/src/Tests/d6/MigrateFieldInstanceTest.php b/core/modules/migrate_drupal/src/Tests/d6/MigrateFieldInstanceTest.php
+index a57307e..269efdf 100644
+--- a/core/modules/migrate_drupal/src/Tests/d6/MigrateFieldInstanceTest.php
++++ b/core/modules/migrate_drupal/src/Tests/d6/MigrateFieldInstanceTest.php
+@@ -90,7 +90,10 @@ public function testFieldInstanceSettings() {
+     // Test a text field.
+     $field = FieldConfig::load('node.story.field_test');
+     $this->assertIdentical('Text Field', $field->label());
+-    $expected = array('max_length' => 255);
++    $expected = array(
++      'allowed_formats' => array(),
++      'max_length' => 255,
++    );
+     $this->assertIdentical($expected, $field->getSettings());
+     $this->assertIdentical('text for default value', $entity->field_test->value);
+ 
+diff --git a/core/modules/node/node.module b/core/modules/node/node.module
+index 4550a6d..d69036e 100644
+--- a/core/modules/node/node.module
++++ b/core/modules/node/node.module
+@@ -328,7 +328,10 @@ function node_add_body_field(NodeTypeInterface $type, $label = 'Body') {
+       'field_storage' => $field_storage,
+       'bundle' => $type->id(),
+       'label' => $label,
+-      'settings' => array('display_summary' => TRUE),
++      'settings' => array(
++        'display_summary' => TRUE,
++        'allowed_formats' => array(),
++      ),
+     ));
+     $field->save();
+ 
+diff --git a/core/modules/options/tests/options_config_install_test/config/install/field.field.node.options_install_test.body.yml b/core/modules/options/tests/options_config_install_test/config/install/field.field.node.options_install_test.body.yml
+index 2078a84..ac288b8 100644
+--- a/core/modules/options/tests/options_config_install_test/config/install/field.field.node.options_install_test.body.yml
++++ b/core/modules/options/tests/options_config_install_test/config/install/field.field.node.options_install_test.body.yml
+@@ -16,5 +16,6 @@ default_value: {  }
+ default_value_callback: ''
+ settings:
+   display_summary: true
++  allowed_formats: {  }
+ third_party_settings: {  }
+ field_type: text_with_summary
+diff --git a/core/modules/text/config/schema/text.schema.yml b/core/modules/text/config/schema/text.schema.yml
+index dfc92cd..6bc711a 100644
+--- a/core/modules/text/config/schema/text.schema.yml
++++ b/core/modules/text/config/schema/text.schema.yml
+@@ -19,6 +19,12 @@ field.storage_settings.text:
+ field.field_settings.text:
+   type: mapping
+   label: 'Text (formatted) settings'
++  mapping:
++    allowed_formats:
++      type: sequence
++      label: 'Allowed text formats'
++      sequence:
++        type: string
+ 
+ field.value.text:
+   type: mapping
+@@ -38,6 +44,12 @@ field.storage_settings.text_long:
+ field.field_settings.text_long:
+   label: 'Text (formatted, long) settings'
+   type: mapping
++  mapping:
++    allowed_formats:
++      type: sequence
++      label: 'Allowed text formats'
++      sequence:
++        type: string
+ 
+ field.value.text_long:
+   type: mapping
+@@ -61,6 +73,11 @@ field.field_settings.text_with_summary:
+     display_summary:
+       type: boolean
+       label: 'Summary input'
++    allowed_formats:
++      type: sequence
++      label: 'Allowed text formats'
++      sequence:
++        type: string
+ 
+ field.value.text_with_summary:
+   type: mapping
+diff --git a/core/modules/text/src/Plugin/Field/FieldType/TextItemBase.php b/core/modules/text/src/Plugin/Field/FieldType/TextItemBase.php
+index 13d15c9..80bd8a9 100644
+--- a/core/modules/text/src/Plugin/Field/FieldType/TextItemBase.php
++++ b/core/modules/text/src/Plugin/Field/FieldType/TextItemBase.php
+@@ -12,12 +12,37 @@
+ use Drupal\Core\Field\FieldItemBase;
+ use Drupal\Core\Field\FieldStorageDefinitionInterface;
+ use Drupal\Core\TypedData\DataDefinition;
++use Drupal\Core\Form\FormStateInterface;
+ 
+ /**
+  * Base class for 'text' configurable field types.
+  */
+ abstract class TextItemBase extends FieldItemBase {
+ 
++
++  /**
++   * {@inheritdoc}
++   */
++  public static function defaultFieldSettings() {
++    return array(
++      'allowed_formats' => array(),
++    ) + parent::defaultFieldSettings();
++  }
++
++  public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
++    $element = parent::fieldSettingsForm($form, $form_state);
++    $settings = $this->getSettings();
++
++    $element['allowed_formats'] = array(
++      '#type' => 'checkboxes',
++      '#title' => t('Allowed text formats'),
++      '#options' => $this->getProperties()['format']->getPossibleOptions(),
++      '#default_value' => $settings['allowed_formats'],
++    );
++
++    return $element;
++  }
++
+   /**
+    * {@inheritdoc}
+    */
+diff --git a/core/modules/text/src/Plugin/Field/FieldType/TextWithSummaryItem.php b/core/modules/text/src/Plugin/Field/FieldType/TextWithSummaryItem.php
+index 48d4dac..6f65d94 100644
+--- a/core/modules/text/src/Plugin/Field/FieldType/TextWithSummaryItem.php
++++ b/core/modules/text/src/Plugin/Field/FieldType/TextWithSummaryItem.php
+@@ -90,7 +90,7 @@ public function isEmpty() {
+    * {@inheritdoc}
+    */
+   public function fieldSettingsForm(array $form, FormStateInterface $form_state) {
+-    $element = array();
++    $element = parent::fieldSettingsForm($form, $form_state);
+     $settings = $this->getSettings();
+ 
+     $element['display_summary'] = array(
+diff --git a/core/modules/text/src/Plugin/Field/FieldWidget/TextareaWidget.php b/core/modules/text/src/Plugin/Field/FieldWidget/TextareaWidget.php
+index 0ac3151..3aadbbb 100644
+--- a/core/modules/text/src/Plugin/Field/FieldWidget/TextareaWidget.php
++++ b/core/modules/text/src/Plugin/Field/FieldWidget/TextareaWidget.php
+@@ -35,6 +35,12 @@ public function formElement(FieldItemListInterface $items, $delta, array $elemen
+     $element['#type'] = 'text_format';
+     $element['#format'] = $items[$delta]->format;
+     $element['#base_type'] = $main_widget['value']['#type'];
++
++    $allowed_formats = array_filter($this->getFieldSetting('allowed_formats'));
++    if (!empty($allowed_formats) && !$this->isDefaultValueWidget($form_state)) {
++      $element['#allowed_formats'] = $allowed_formats;
++    }
++
+     return $element;
+   }
+ 
+diff --git a/core/modules/text/src/Plugin/Field/FieldWidget/TextfieldWidget.php b/core/modules/text/src/Plugin/Field/FieldWidget/TextfieldWidget.php
+index ab2f19a..6672e33 100644
+--- a/core/modules/text/src/Plugin/Field/FieldWidget/TextfieldWidget.php
++++ b/core/modules/text/src/Plugin/Field/FieldWidget/TextfieldWidget.php
+@@ -35,6 +35,12 @@ public function formElement(FieldItemListInterface $items, $delta, array $elemen
+     $element['#type'] = 'text_format';
+     $element['#format'] = isset($items[$delta]->format) ? $items[$delta]->format : NULL;
+     $element['#base_type'] = $main_widget['value']['#type'];
++
++    $allowed_formats = array_filter($this->getFieldSetting('allowed_formats'));
++    if (!empty($allowed_formats) && !$this->isDefaultValueWidget($form_state)) {
++      $element['#allowed_formats'] = $allowed_formats;
++    }
++
+     return $element;
+   }
+ 
+diff --git a/core/modules/views/src/Tests/Entity/ViewEntityDependenciesTest.php b/core/modules/views/src/Tests/Entity/ViewEntityDependenciesTest.php
+index 8805214..678c08f 100644
+--- a/core/modules/views/src/Tests/Entity/ViewEntityDependenciesTest.php
++++ b/core/modules/views/src/Tests/Entity/ViewEntityDependenciesTest.php
+@@ -76,7 +76,10 @@ protected function setUp() {
+       'field_storage' => FieldStorageConfig::loadByName('node', 'body'),
+       'bundle' => $content_type->id(),
+       'label' => $this->randomMachineName() . '_body',
+-      'settings' => array('display_summary' => TRUE),
++      'settings' => array(
++        'display_summary' => TRUE,
++        'allowed_formats' => array(),
++      ),
+     ))->save();
+ 
+     ViewTestData::createTestViews(get_class($this), array('views_test_config'));
+diff --git a/core/profiles/standard/config/install/field.field.block_content.basic.body.yml b/core/profiles/standard/config/install/field.field.block_content.basic.body.yml
+index e115700..14e481a 100644
+--- a/core/profiles/standard/config/install/field.field.block_content.basic.body.yml
++++ b/core/profiles/standard/config/install/field.field.block_content.basic.body.yml
+@@ -18,5 +18,6 @@ default_value: {  }
+ default_value_callback: ''
+ settings:
+   display_summary: false
++  allowed_formats: {  }
+ third_party_settings: {  }
+ field_type: text_with_summary
+diff --git a/core/profiles/standard/config/install/field.field.comment.comment.comment_body.yml b/core/profiles/standard/config/install/field.field.comment.comment.comment_body.yml
+index 30aaabe..8342f44 100644
+--- a/core/profiles/standard/config/install/field.field.comment.comment.comment_body.yml
++++ b/core/profiles/standard/config/install/field.field.comment.comment.comment_body.yml
+@@ -16,6 +16,7 @@ required: true
+ translatable: true
+ default_value: {  }
+ default_value_callback: ''
+-settings: {  }
++settings:
++  allowed_formats: {  }
+ third_party_settings: {  }
+ field_type: text_long
+diff --git a/core/profiles/standard/config/install/field.field.node.article.body.yml b/core/profiles/standard/config/install/field.field.node.article.body.yml
+index e2cdb3a..e6a9e32 100644
+--- a/core/profiles/standard/config/install/field.field.node.article.body.yml
++++ b/core/profiles/standard/config/install/field.field.node.article.body.yml
+@@ -18,5 +18,6 @@ default_value: {  }
+ default_value_callback: ''
+ settings:
+   display_summary: true
++  allowed_formats: {  }
+ third_party_settings: {  }
+ field_type: text_with_summary
+diff --git a/core/profiles/standard/config/install/field.field.node.page.body.yml b/core/profiles/standard/config/install/field.field.node.page.body.yml
+index 57bb0b0..5829298 100644
+--- a/core/profiles/standard/config/install/field.field.node.page.body.yml
++++ b/core/profiles/standard/config/install/field.field.node.page.body.yml
+@@ -18,5 +18,6 @@ default_value: {  }
+ default_value_callback: ''
+ settings:
+   display_summary: true
++  allowed_formats: {  }
+ third_party_settings: {  }
+ field_type: text_with_summary
